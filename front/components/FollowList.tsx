@@ -1,12 +1,11 @@
 import { StopOutlined } from '@ant-design/icons';
+import { IUser } from '../interfaces/db';
 import { Button, Card, List } from 'antd';
 import React, { useMemo } from 'react';
 
 interface FollowListProps {
   header: string;
-  data: {
-    nickname: string;
-  }[];
+  data: IUser['Followers'] | IUser['Followings'] | undefined;
 }
 
 function FollowList({ header, data }: FollowListProps) {

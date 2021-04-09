@@ -19,3 +19,11 @@
 ## redux
 
 ### redux-devtools-extension 크롬 개발자 도구 툴 연동
+
+### redux-thunk 비동기 처리를 여러번 할 수 있게 해준다
+
+## 더미데이터 만들기
+
+### shortid = 임의의 아이디 생성
+
+### faker = 임의의 데이터 생성

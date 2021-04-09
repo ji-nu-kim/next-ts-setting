@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, Dispatch, SetStateAction } from 'react';
 
-function useInput(initialValue: any) {
+function useInput<T>(initialValue: T): [T, any, Dispatch<SetStateAction<T>>] {
   const [value, setValue] = useState(initialValue);
 
   const handler = useCallback(e => {

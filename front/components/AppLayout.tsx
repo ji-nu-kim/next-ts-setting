@@ -1,11 +1,10 @@
 import React, { ReactNode } from 'react';
+import styled, { createGlobalStyle } from 'styled-components';
 import Link from 'next/link';
 import { Input, Menu, Row, Col } from 'antd';
+import { useSelector } from 'react-redux';
 import UserProfile from './UserProfile';
 import LoginForm from './LoginForm';
-import styled from 'styled-components';
-import { useSelector } from 'react-redux';
-import { createGlobalStyle } from 'styled-components';
 
 import { RootStateInterface } from '../interfaces/RootState';
 
@@ -33,8 +32,8 @@ interface AppLayoutProps {
 }
 
 function AppLayout({ children }: AppLayoutProps) {
-  const isLoggedIn = useSelector(
-    (state: RootStateInterface) => state.user.isLoggedIn
+  const logInDone = useSelector(
+    (state: RootStateInterface) => state.user.logInDone
   );
   return (
     <div>
@@ -61,7 +60,7 @@ function AppLayout({ children }: AppLayoutProps) {
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>
-          {isLoggedIn ? <UserProfile /> : <LoginForm />}
+          {logInDone ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}

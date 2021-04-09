@@ -1,26 +1,35 @@
-import { addPostAction } from '@actions/actionPost';
-import useInput from '@hooks/useInput';
+import { addPostRequestAction } from '../actions/actionPost';
+import useInput from '../hooks/useInput';
 import { Button, Form, Input } from 'antd';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootStateInterface } from '../interfaces/RootState';
 
 function PostForm() {
-  const { imagePaths } = useSelector((state: RootStateInterface) => state.post);
+  const { imagePaths, addPostDone } = useSelector(
+    (state: RootStateInterface) => state.post
+  );
+  const id = useSelector((state: RootStateInterface) => state.user.me?.id);
   const dispatch = useDispatch();
-  const imageInputRef = useRef<HTMLInputElement>(null);
-  const imageInput = imageInputRef.current;
+  const [text, onChangeText, setText] = useInput<string>('');
 
-  const [text, onChangeText, setText] = useInput('');
+  useEffect(() => {
+    if (addPostDone) {
+      setText('');
+    }
+  }, [addPostDone]);
+
   const onSubmit = useCallback(() => {
-    dispatch(addPostAction());
-    setText('');
-  }, []);
+    if (id) {
+      dispatch(addPostRequestAction({ content: text, userId: id }));
+    }
+  }, [text, id]);
 
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const onClickImageUpload = useCallback(() => {
-    imageInput?.click();
-  }, [imageInput]);
+    imageInputRef.current?.click();
+  }, [imageInputRef.current]);
 
   return (
     <Form
@@ -43,8 +52,8 @@ function PostForm() {
       </div>
       <div>
         {imagePaths.map(v => (
-          <div key={v} style={{ display: 'inline-block' }}>
-            <img src={v} style={{ width: '200px' }} alt={v} />
+          <div key={v.src} style={{ display: 'inline-block' }}>
+            <img src={v.src} style={{ width: '200px' }} alt={v.src} />
             <div>
               <Button>제거</Button>
             </div>

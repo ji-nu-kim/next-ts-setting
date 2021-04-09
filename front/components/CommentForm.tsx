@@ -1,29 +1,42 @@
-import useInput from '@hooks/useInput';
-import { RootStateInterface } from '@interfaces/RootState';
+import { IPost } from '../interfaces/db';
 import { Form, Input, Button } from 'antd';
-import React, { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useEffect } from 'react';
+import { addCommentRequestAction } from '../actions/actionPost';
+import useInput from '../hooks/useInput';
+import { RootStateInterface } from '../interfaces/RootState';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface CommentFormProps {
-  post: {
-    id: number;
-    User: {
-      id: string;
-      nickname: string;
-    };
-    content: string;
-    Images: { src: string }[];
-    Comments: { User: { nickname: string }; content: string }[];
-  };
+  post: IPost;
 }
 
 function CommentForm({ post }: CommentFormProps) {
+  const dispatch = useDispatch();
   const id = useSelector((state: RootStateInterface) => state.user.me?.id);
+  const { addCommentDone } = useSelector(
+    (state: RootStateInterface) => state.post
+  );
+  const [commentText, onChangeCommentText, setCommentText] = useInput<string>(
+    ''
+  );
 
-  const [commentText, onChangeCommentText, setCommentText] = useInput('');
+  useEffect(() => {
+    if (addCommentDone) {
+      setCommentText('');
+    }
+  }, [addCommentDone]);
+
   const onSubmitComment = useCallback(() => {
-    setCommentText('');
-  }, [commentText]);
+    if (id) {
+      dispatch(
+        addCommentRequestAction({
+          comment: commentText,
+          postId: post.id,
+          userId: id,
+        })
+      );
+    }
+  }, [commentText, post, id]);
 
   return (
     <Form onFinish={onSubmitComment}>

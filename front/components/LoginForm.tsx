@@ -1,9 +1,11 @@
 import { Button, Form } from 'antd';
 import Link from 'next/link';
-import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { loginAction } from '../actions/actionUser';
+import { RootStateInterface } from '../interfaces/RootState';
+import useInput from '../hooks/useInput';
+import { loginRequestAction } from '../actions/actionUser';
 
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -15,21 +17,15 @@ const FormWrapper = styled(Form)`
 
 function LoginForm() {
   const dispatch = useDispatch();
-  const [id, setId] = useState('');
-  const [password, setPassword] = useState('');
-
-  const onChangeId = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setId(e.target.value);
-  }, []);
-
-  const onChangePassword = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  }, []);
+  const { logInLoading } = useSelector(
+    (state: RootStateInterface) => state.user
+  );
+  const [email, onChangeEmail] = useInput<string>('');
+  const [password, onChangePassword] = useInput<string>('');
 
   const onSubmitForm = useCallback(() => {
-    console.log(id, password);
-    dispatch(loginAction({ id, password }));
-  }, [id, password]);
+    dispatch(loginRequestAction(email, password));
+  }, [email, password]);
 
   // useMemo예제
   const idColor = useMemo(() => ({ color: 'hotpink' }), []);
@@ -37,15 +33,15 @@ function LoginForm() {
   return (
     <FormWrapper onFinish={onSubmitForm}>
       <div>
-        <label style={idColor} htmlFor="user-id">
-          아이디
+        <label style={idColor} htmlFor="user-email">
+          이메일
         </label>
         <br />
         <input
-          name="user-id"
-          value={id}
-          onChange={onChangeId}
-          type="text"
+          name="user-email"
+          value={email}
+          onChange={onChangeEmail}
+          type="email"
           required
         />
       </div>
@@ -56,13 +52,13 @@ function LoginForm() {
           name="user-password"
           value={password}
           onChange={onChangePassword}
-          type="text"
+          type="password"
           required
         />
       </div>
       <div>
         <ButtonWrapper>
-          <Button type="primary" htmlType="submit" loading={false}>
+          <Button type="primary" htmlType="submit" loading={logInLoading}>
             로그인
           </Button>
           <Link href="/signup">

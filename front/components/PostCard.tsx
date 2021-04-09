@@ -1,3 +1,4 @@
+import { removePostRequestAction } from '../actions/actionPost';
 import {
   EllipsisOutlined,
   HeartOutlined,
@@ -5,30 +6,27 @@ import {
   MessageOutlined,
   RetweetOutlined,
 } from '@ant-design/icons';
+import { IPost } from '../interfaces/db';
 import { Button, Card, Popover, List, Avatar, Comment } from 'antd';
 import React, { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { RootStateInterface } from '../interfaces/RootState';
 import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
 import PostImages from './PostImages';
+import FollowButton from './FollowButton';
 
 interface postCardProps {
-  post: {
-    id: number;
-    User: {
-      id: string;
-      nickname: string;
-    };
-    content: string;
-    Images: { src: string }[];
-    Comments: { User: { nickname: string }; content: string }[];
-  };
+  post: IPost;
 }
 
 function PostCard({ post }: postCardProps) {
+  const dispatch = useDispatch();
   const id = useSelector((state: RootStateInterface) => state.user.me?.id);
+  const removePostLoading = useSelector(
+    (state: RootStateInterface) => state.post.removePostLoading
+  );
 
   const [liked, setLiked] = useState(false);
   const onToggleLike = useCallback(() => {
@@ -39,6 +37,10 @@ function PostCard({ post }: postCardProps) {
   const onToggleFormOpened = useCallback(() => {
     setCommentFormOpened(prev => !prev);
   }, []);
+
+  const onRemovePost = useCallback(() => {
+    dispatch(removePostRequestAction(post.id));
+  }, [post]);
 
   return (
     <div style={{ marginBottom: 10 }}>
@@ -63,7 +65,13 @@ function PostCard({ post }: postCardProps) {
                 {id && id === post.User.id ? (
                   <>
                     <Button>수정</Button>
-                    <Button danger>삭제</Button>
+                    <Button
+                      danger
+                      loading={removePostLoading}
+                      onClick={onRemovePost}
+                    >
+                      삭제
+                    </Button>
                   </>
                 ) : (
                   <Button>신고</Button>
@@ -74,6 +82,7 @@ function PostCard({ post }: postCardProps) {
             <EllipsisOutlined />
           </Popover>,
         ]}
+        extra={id && <FollowButton post={post} />}
       >
         <Card.Meta
           avatar={<Avatar>{post.User.nickname[0]}</Avatar>}

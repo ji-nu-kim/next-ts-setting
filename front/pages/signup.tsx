@@ -1,9 +1,11 @@
-import AppLayout from '@components/AppLayout';
-import useInput from '@hooks/useInput';
+import { signUpRequestAction } from '../actions/actionUser';
+import AppLayout from '../components/AppLayout';
+import useInput from '../hooks/useInput';
 import { Form, Checkbox, Input, Button } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import Head from 'next/head';
 import React, { ChangeEvent, useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 const ErrorMessage = styled.div`
@@ -11,7 +13,8 @@ const ErrorMessage = styled.div`
 `;
 
 function Signup() {
-  const [id, onChangeId] = useInput('');
+  const disatch = useDispatch();
+  const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, onChangePassword] = useInput('');
 
@@ -40,7 +43,8 @@ function Signup() {
     if (!term) {
       return setTermError(true);
     }
-  }, [password, term, passwordCheck]);
+    disatch(signUpRequestAction({ email, nickname, password }));
+  }, [email, nickname, password, term, passwordCheck]);
 
   return (
     <>
@@ -49,14 +53,14 @@ function Signup() {
         <h1>Signup</h1>
         <Form onFinish={onsubmit}>
           <div>
-            <label htmlFor="user-id">아이디</label>
+            <label htmlFor="user-email">이메일</label>
             <br />
             <Input
-              name="user-id"
-              type="text"
-              value={id}
+              name="user-email"
+              type="email"
+              value={email}
               required
-              onChange={onChangeId}
+              onChange={onChangeEmail}
             />
           </div>
           <div>
