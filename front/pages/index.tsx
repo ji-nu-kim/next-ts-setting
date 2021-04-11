@@ -20,8 +20,6 @@ function Home() {
 
   useEffect(() => {
     function onScroll() {
-      console.log(window.scrollY + document.documentElement.clientHeight);
-      console.log(document.documentElement.scrollHeight);
       if (
         window.scrollY + document.documentElement.clientHeight >=
         document.documentElement.scrollHeight - 300
