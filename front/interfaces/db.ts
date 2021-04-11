@@ -7,8 +7,6 @@ export interface IUser {
   id: string;
   email: string;
   nickname: string;
-  createdAt: Date;
-  updatedAt: Date;
   Posts: { id: string }[];
   Followings: IUserInfo[];
   Followers: IUserInfo[];
@@ -17,8 +15,6 @@ export interface IUser {
 export interface IPost {
   id: string;
   content: string;
-  createdAt?: Date;
-  updatedAt?: Date;
   User: IUserInfo;
   Retweet?: any;
   Images: { src: string }[];
@@ -35,8 +31,6 @@ export interface ICommentProps {
 export interface IComment {
   id: string;
   content: string;
-  createdAt?: Date;
-  updatedAt?: Date;
   postId: string;
   User: IUserInfo;
 }

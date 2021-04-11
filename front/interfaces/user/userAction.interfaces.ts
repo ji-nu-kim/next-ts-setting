@@ -49,6 +49,7 @@ export interface ISignUpRequest {
 }
 export interface ISignUpSuccess {
   type: typeof actionTypesUser.SIGN_UP_SUCCESS;
+  data: IUser;
 }
 export interface ISignUpError {
   type: typeof actionTypesUser.SIGN_UP_ERROR;

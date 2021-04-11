@@ -1,34 +1,34 @@
-import { all, delay, fork, put, takeLatest } from 'redux-saga/effects';
+import { all, call, delay, fork, put, takeLatest } from 'redux-saga/effects';
 import {
   actionTypesUser,
   IFollowRequest,
   ILogInRequest,
+  ISignUpRequest,
   IUnfollowRequest,
 } from '../interfaces/user/userAction.interfaces';
-import shortId from 'shortid';
+import axios from 'axios';
+import { IUser } from 'interfaces/db';
+
+function loginAPI(data: { email: string; password: string }) {
+  return axios.post('/user/login', data);
+}
 
 function* logIn(action: ILogInRequest) {
   try {
-    const userInfo = {
-      email: action.data.email,
-      nickname: '바트심슨',
-      id: shortId.generate(),
-      Posts: [],
-      Followings: [],
-      Followers: [],
-    };
-    yield delay(1000);
+    const result: { data: IUser } = yield call(loginAPI, action.data);
+    console.log(result);
     yield put({
       type: actionTypesUser.LOG_IN_SUCCESS,
-      data: userInfo,
+      data: result.data,
     });
-  } catch (err) {
+  } catch (error) {
     yield put({
       type: actionTypesUser.LOG_IN_ERROR,
-      error: err,
+      error: error.response.data,
     });
   }
 }
+
 function* logOut() {
   try {
     yield delay(1000);
@@ -42,19 +42,29 @@ function* logOut() {
     });
   }
 }
-function* signUp() {
+
+function signUpAPI(data: {
+  email: string;
+  nickname: string;
+  password: string;
+}) {
+  return axios.post('/user/signup', data);
+}
+
+function* signUp(action: ISignUpRequest) {
   try {
-    yield delay(1000);
+    yield call(signUpAPI, action.data);
     yield put({
       type: actionTypesUser.SIGN_UP_SUCCESS,
     });
-  } catch (err) {
+  } catch (error) {
     yield put({
       type: actionTypesUser.SIGN_UP_ERROR,
-      error: err,
+      error: error.response.data,
     });
   }
 }
+
 function* follow(action: IFollowRequest) {
   try {
     yield delay(1000);

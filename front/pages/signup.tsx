@@ -4,9 +4,11 @@ import useInput from '../hooks/useInput';
 import { Form, Checkbox, Input, Button } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import Head from 'next/head';
-import React, { ChangeEvent, useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import Router from 'next/router';
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { RootStateInterface } from 'interfaces/RootState';
 
 const ErrorMessage = styled.div`
   color: crimson;
@@ -14,6 +16,28 @@ const ErrorMessage = styled.div`
 
 function Signup() {
   const disatch = useDispatch();
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector(
+    (state: RootStateInterface) => state.user
+  );
+
+  useEffect(() => {
+    if (me && me.id) {
+      Router.push('/');
+    }
+  }, [me]);
+
+  useEffect(() => {
+    if (signUpDone) {
+      Router.push('/');
+    }
+  }, [signUpDone]);
+
+  useEffect(() => {
+    if (signUpError) {
+      alert(signUpError);
+    }
+  }, [signUpError]);
+
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -105,7 +129,7 @@ function Signup() {
             </Checkbox>
             {termError && <ErrorMessage>약관에 동의하셔야 합니다</ErrorMessage>}
           </div>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={signUpLoading}>
             가입
           </Button>
         </Form>

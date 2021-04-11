@@ -37,4 +37,8 @@
 - mysql2 sequelize sequelize-cli 설치
 - npx sequleize init으로 초기화
 - npx sequelize db:create으로 데이터베이스 생성
--
+
+## passport
+
+- 여러가지 로그인 전략을 세울 수 있도록 도와주는 라이브러리
+- passport-local은 이메일, 아이디, 비밀번호를 사용해 로그인할 수 있도록 해줌

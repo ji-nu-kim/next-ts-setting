@@ -1,6 +1,6 @@
 import { Button, Form } from 'antd';
 import Link from 'next/link';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { RootStateInterface } from '../interfaces/RootState';
@@ -17,9 +17,16 @@ const FormWrapper = styled(Form)`
 
 function LoginForm() {
   const dispatch = useDispatch();
-  const { logInLoading } = useSelector(
+  const { logInLoading, logInError } = useSelector(
     (state: RootStateInterface) => state.user
   );
+
+  useEffect(() => {
+    if (logInError) {
+      alert(logInError);
+    }
+  }, [logInError]);
+
   const [email, onChangeEmail] = useInput<string>('');
   const [password, onChangePassword] = useInput<string>('');
 

@@ -69,9 +69,10 @@ export const signUpRequestAction = (data: {
     data,
   };
 };
-export const signUpSuccessAction = (): ISignUpSuccess => {
+export const signUpSuccessAction = (data: IUser): ISignUpSuccess => {
   return {
     type: actionTypesUser.SIGN_UP_SUCCESS,
+    data,
   };
 };
 export const signUpErrorAction = (error: any): ISignUpError => {
