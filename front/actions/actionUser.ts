@@ -7,6 +7,9 @@ import {
   ILogOutRequest,
   ILogOutSuccess,
   ILogOutError,
+  ILoadMyInfoRequest,
+  ILoadMyInfoSuccess,
+  ILoadMyInfoError,
   ISignUpRequest,
   ISignUpSuccess,
   ISignUpError,
@@ -16,6 +19,18 @@ import {
   IUnfollowRequest,
   IUnfollowSuccess,
   IUnfollowError,
+  ILoadFollowersRequest,
+  ILoadFollowersSuccess,
+  ILoadFollowersError,
+  ILoadFollowingsRequest,
+  ILoadFollowingsSuccess,
+  ILoadFollowingsError,
+  IRemoveFollowerRequest,
+  IRemoveFollowerSuccess,
+  IRemoveFollowerError,
+  IChangeNicknameRequest,
+  IChangeNicknameSuccess,
+  IChangeNicknameError,
   IAddPostToMe,
   IRemovePostOfMe,
 } from '../interfaces/user/userAction.interfaces';
@@ -35,13 +50,12 @@ export const loginSuccessAction = (data: IUser): ILogInSuccess => {
     data,
   };
 };
-export const loginErrorAction = (error: any): ILogInError => {
+export const loginErrorAction = (error: Error): ILogInError => {
   return {
     type: actionTypesUser.LOG_IN_ERROR,
     error,
   };
 };
-
 export const logOutRequestAction = (): ILogOutRequest => {
   return {
     type: actionTypesUser.LOG_OUT_REQUEST,
@@ -52,9 +66,27 @@ export const logOutSuccessAction = (): ILogOutSuccess => {
     type: actionTypesUser.LOG_OUT_SUCCESS,
   };
 };
-export const logOutErrorAction = (error: any): ILogOutError => {
+export const logOutErrorAction = (error: Error): ILogOutError => {
   return {
     type: actionTypesUser.LOG_OUT_ERROR,
+    error,
+  };
+};
+
+export const loadMyInfoRequestAction = (): ILoadMyInfoRequest => {
+  return {
+    type: actionTypesUser.LOAD_MY_INFO_REQUEST,
+  };
+};
+export const loadMyInfoSuccessAction = (data: IUser): ILoadMyInfoSuccess => {
+  return {
+    type: actionTypesUser.LOAD_MY_INFO_SUCCESS,
+    data,
+  };
+};
+export const loadMyInfoErrorAction = (error: Error): ILoadMyInfoError => {
+  return {
+    type: actionTypesUser.LOAD_MY_INFO_ERROR,
     error,
   };
 };
@@ -75,7 +107,7 @@ export const signUpSuccessAction = (data: IUser): ISignUpSuccess => {
     data,
   };
 };
-export const signUpErrorAction = (error: any): ISignUpError => {
+export const signUpErrorAction = (error: Error): ISignUpError => {
   return {
     type: actionTypesUser.SIGN_UP_ERROR,
     error,
@@ -83,8 +115,7 @@ export const signUpErrorAction = (error: any): ISignUpError => {
 };
 
 export const followRequestAction = (data: {
-  id: string;
-  nickname: string;
+  userId: number;
 }): IFollowRequest => {
   return {
     type: actionTypesUser.FOLLOW_REQUEST,
@@ -92,46 +123,139 @@ export const followRequestAction = (data: {
   };
 };
 export const followSuccessAction = (data: {
-  id: string;
-  nickname: string;
+  userId: number;
 }): IFollowSuccess => {
   return {
     type: actionTypesUser.FOLLOW_SUCCESS,
     data,
   };
 };
-export const followErrorAction = (error: any): IFollowError => {
+export const followErrorAction = (error: Error): IFollowError => {
   return {
     type: actionTypesUser.FOLLOW_ERROR,
     error,
   };
 };
-export const unfollowRequestAction = (data: string): IUnfollowRequest => {
+export const unfollowRequestAction = (data: {
+  userId: number;
+}): IUnfollowRequest => {
   return {
     type: actionTypesUser.UNFOLLOW_REQUEST,
     data,
   };
 };
-export const unfollowSuccessAction = (data: string): IUnfollowSuccess => {
+export const unfollowSuccessAction = (data: {
+  userId: number;
+}): IUnfollowSuccess => {
   return {
     type: actionTypesUser.UNFOLLOW_SUCCESS,
     data,
   };
 };
-export const unfollowErrorAction = (error: any): IUnfollowError => {
+export const unfollowErrorAction = (error: Error): IUnfollowError => {
   return {
     type: actionTypesUser.UNFOLLOW_ERROR,
     error,
   };
 };
 
-export const addPostToMe = (data: string): IAddPostToMe => {
+export const loadFollowersRequestAction = (): ILoadFollowersRequest => {
+  return {
+    type: actionTypesUser.LOAD_FOLLOWERS_REQUEST,
+  };
+};
+export const loadFollowersSuccessAction = (
+  data: any
+): ILoadFollowersSuccess => {
+  return {
+    type: actionTypesUser.LOAD_FOLLOWERS_SUCCESS,
+    data,
+  };
+};
+export const loadFollowersErrorAction = (error: Error): ILoadFollowersError => {
+  return {
+    type: actionTypesUser.LOAD_FOLLOWERS_ERROR,
+    error,
+  };
+};
+export const loadFollowingsRequestAction = (): ILoadFollowingsRequest => {
+  return {
+    type: actionTypesUser.LOAD_FOLLOWINGS_REQUEST,
+  };
+};
+export const loadFollowingsSuccessAction = (
+  data: any
+): ILoadFollowingsSuccess => {
+  return {
+    type: actionTypesUser.LOAD_FOLLOWINGS_SUCCESS,
+    data,
+  };
+};
+export const loadFollowingsErrorAction = (
+  error: Error
+): ILoadFollowingsError => {
+  return {
+    type: actionTypesUser.LOAD_FOLLOWINGS_ERROR,
+    error,
+  };
+};
+export const removeFollowerRequestAction = (data: {
+  userId: number;
+}): IRemoveFollowerRequest => {
+  return {
+    type: actionTypesUser.REMOVE_FOLLOWER_REQUEST,
+    data,
+  };
+};
+export const removeFollowerSuccessAction = (data: {
+  userId: number;
+}): IRemoveFollowerSuccess => {
+  return {
+    type: actionTypesUser.REMOVE_FOLLOWER_SUCCESS,
+    data,
+  };
+};
+export const removeFollowerErrorAction = (
+  error: Error
+): IRemoveFollowerError => {
+  return {
+    type: actionTypesUser.REMOVE_FOLLOWER_ERROR,
+    error,
+  };
+};
+
+export const changeNicknameRequestAction = (data: {
+  nickname: string;
+}): IChangeNicknameRequest => {
+  return {
+    type: actionTypesUser.CHANGE_NICKNAME_REQUEST,
+    data,
+  };
+};
+export const changeNicknameSuccessAction = (data: {
+  nickname: string;
+}): IChangeNicknameSuccess => {
+  return {
+    type: actionTypesUser.CHANGE_NICKNAME_SUCCESS,
+    data,
+  };
+};
+export const changeNicknameErrorAction = (
+  error: Error
+): IChangeNicknameError => {
+  return {
+    type: actionTypesUser.CHANGE_NICKNAME_ERROR,
+    error,
+  };
+};
+
+export const addPostToMe = (data: number): IAddPostToMe => {
   return {
     type: actionTypesUser.ADD_POST_TO_ME,
     data,
   };
 };
-export const removePostOfMe = (data: string): IRemovePostOfMe => {
+export const removePostOfMe = (data: { postId: number }): IRemovePostOfMe => {
   return {
     type: actionTypesUser.REMOVE_POST_OF_ME,
     data,

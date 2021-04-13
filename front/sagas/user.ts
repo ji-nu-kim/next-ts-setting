@@ -1,8 +1,10 @@
-import { all, call, delay, fork, put, takeLatest } from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 import {
   actionTypesUser,
+  IChangeNicknameRequest,
   IFollowRequest,
   ILogInRequest,
+  IRemoveFollowerRequest,
   ISignUpRequest,
   IUnfollowRequest,
 } from '../interfaces/user/userAction.interfaces';
@@ -16,7 +18,6 @@ function loginAPI(data: { email: string; password: string }) {
 function* logIn(action: ILogInRequest) {
   try {
     const result: { data: IUser } = yield call(loginAPI, action.data);
-    console.log(result);
     yield put({
       type: actionTypesUser.LOG_IN_SUCCESS,
       data: result.data,
@@ -29,16 +30,39 @@ function* logIn(action: ILogInRequest) {
   }
 }
 
+function logOutAPI() {
+  return axios.post('/user/logout');
+}
+
 function* logOut() {
   try {
-    yield delay(1000);
+    yield call(logOutAPI);
     yield put({
       type: actionTypesUser.LOG_OUT_SUCCESS,
     });
-  } catch (err) {
+  } catch (error) {
     yield put({
       type: actionTypesUser.LOG_OUT_ERROR,
-      error: err,
+      error: error.response.data,
+    });
+  }
+}
+
+function loadMyInfoAPI() {
+  return axios.get('/user');
+}
+
+function* loadMyInfo() {
+  try {
+    const result: { data: IUser } = yield call(loadMyInfoAPI);
+    yield put({
+      type: actionTypesUser.LOAD_MY_INFO_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    yield put({
+      type: actionTypesUser.LOAD_MY_INFO_ERROR,
+      error: error.response.data,
     });
   }
 }
@@ -65,34 +89,132 @@ function* signUp(action: ISignUpRequest) {
   }
 }
 
+function followAPI(data: { userId: number }) {
+  return axios.patch(`/user/${data.userId}/follow`);
+}
+
 function* follow(action: IFollowRequest) {
   try {
-    yield delay(1000);
+    const result: { data: { userId: number } } = yield call(
+      followAPI,
+      action.data
+    );
     yield put({
       type: actionTypesUser.FOLLOW_SUCCESS,
-      data: {
-        id: action.data.id,
-        nickname: action.data.nickname,
-      },
+      data: result.data,
     });
-  } catch (err) {
+  } catch (error) {
     yield put({
       type: actionTypesUser.FOLLOW_ERROR,
-      error: err,
+      error: error.response.data,
     });
   }
 }
+
+function unfollowAPI(data: { userId: number }) {
+  return axios.delete(`/user/${data.userId}/follow`);
+}
+
 function* unfollow(action: IUnfollowRequest) {
   try {
-    yield delay(1000);
+    const result: { data: { userId: number } } = yield call(
+      unfollowAPI,
+      action.data
+    );
     yield put({
       type: actionTypesUser.UNFOLLOW_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
-  } catch (err) {
+  } catch (error) {
     yield put({
       type: actionTypesUser.UNFOLLOW_ERROR,
-      error: err,
+      error: error.response.data,
+    });
+  }
+}
+
+function loadFollowersAPI() {
+  return axios.get(`/user/followers`);
+}
+
+function* loadFollowers() {
+  try {
+    const result: { data: { id: number; nickname: string } } = yield call(
+      loadFollowersAPI
+    );
+    yield put({
+      type: actionTypesUser.LOAD_FOLLOWERS_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    yield put({
+      type: actionTypesUser.LOAD_FOLLOWERS_ERROR,
+      error: error.response.data,
+    });
+  }
+}
+
+function loadFollowingsAPI() {
+  return axios.get(`/user/followings`);
+}
+
+function* loadFollowings() {
+  try {
+    const result: { data: { id: number; nickname: string } } = yield call(
+      loadFollowingsAPI
+    );
+    yield put({
+      type: actionTypesUser.LOAD_FOLLOWINGS_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    yield put({
+      type: actionTypesUser.LOAD_FOLLOWINGS_ERROR,
+      error: error.response.data,
+    });
+  }
+}
+
+function removeFollowerAPI(data: { userId: number }) {
+  return axios.delete(`/user/follower/${data.userId}`);
+}
+
+function* removeFollower(action: IRemoveFollowerRequest) {
+  try {
+    const result: { data: { userId: number } } = yield call(
+      removeFollowerAPI,
+      action.data
+    );
+    yield put({
+      type: actionTypesUser.REMOVE_FOLLOWER_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    yield put({
+      type: actionTypesUser.REMOVE_FOLLOWER_ERROR,
+      error: error.response.data,
+    });
+  }
+}
+
+function changeNicknameAPI(data: { nickname: string }) {
+  return axios.patch('/user/nickname', data);
+}
+
+function* changeNickname(action: IChangeNicknameRequest) {
+  try {
+    const result: { data: { nickname: string } } = yield call(
+      changeNicknameAPI,
+      action.data
+    );
+    yield put({
+      type: actionTypesUser.CHANGE_NICKNAME_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    yield put({
+      type: actionTypesUser.CHANGE_NICKNAME_ERROR,
+      error: error.response.data,
     });
   }
 }
@@ -103,6 +225,9 @@ function* watchLogIn() {
 function* watchLogOut() {
   yield takeLatest(actionTypesUser.LOG_OUT_REQUEST, logOut);
 }
+function* watchLoadMyInfo() {
+  yield takeLatest(actionTypesUser.LOAD_MY_INFO_REQUEST, loadMyInfo);
+}
 function* watchSignUp() {
   yield takeLatest(actionTypesUser.SIGN_UP_REQUEST, signUp);
 }
@@ -112,13 +237,30 @@ function* watchFollow() {
 function* watchUnfollow() {
   yield takeLatest(actionTypesUser.UNFOLLOW_REQUEST, unfollow);
 }
+function* watchLoadFollowers() {
+  yield takeLatest(actionTypesUser.LOAD_FOLLOWERS_REQUEST, loadFollowers);
+}
+function* watchLoadFollowings() {
+  yield takeLatest(actionTypesUser.LOAD_FOLLOWINGS_REQUEST, loadFollowings);
+}
+function* watchremoveFollower() {
+  yield takeLatest(actionTypesUser.REMOVE_FOLLOWER_REQUEST, removeFollower);
+}
+function* watchChangeNickname() {
+  yield takeLatest(actionTypesUser.CHANGE_NICKNAME_REQUEST, changeNickname);
+}
 
 export default function* userSaga() {
   yield all([
     fork(watchLogIn),
     fork(watchLogOut),
+    fork(watchLoadMyInfo),
     fork(watchSignUp),
     fork(watchFollow),
     fork(watchUnfollow),
+    fork(watchLoadFollowers),
+    fork(watchLoadFollowings),
+    fork(watchremoveFollower),
+    fork(watchChangeNickname),
   ]);
 }

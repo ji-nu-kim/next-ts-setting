@@ -32,9 +32,7 @@ interface AppLayoutProps {
 }
 
 function AppLayout({ children }: AppLayoutProps) {
-  const logInDone = useSelector(
-    (state: RootStateInterface) => state.user.logInDone
-  );
+  const me = useSelector((state: RootStateInterface) => state.user.me);
   return (
     <div>
       <Global />
@@ -60,7 +58,7 @@ function AppLayout({ children }: AppLayoutProps) {
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>
-          {logInDone ? <UserProfile /> : <LoginForm />}
+          {me ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}

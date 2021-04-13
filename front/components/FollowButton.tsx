@@ -20,13 +20,15 @@ function FollowButton({ post }: FollowButtonProps) {
   const isFollowing = me?.Followings.find(v => v.id === post.User.id);
   const onClickButton = useCallback(() => {
     if (isFollowing) {
-      dispatch(unfollowRequestAction(post.User.id));
+      dispatch(unfollowRequestAction({ userId: post.User.id }));
     } else {
-      dispatch(
-        followRequestAction({ id: post.User.id, nickname: post.User.nickname })
-      );
+      dispatch(followRequestAction({ userId: post.User.id }));
     }
-  }, [isFollowing]);
+  }, [isFollowing, post]);
+
+  if (post.User.id === me?.id) {
+    return null;
+  }
   return (
     <Button loading={followLoading || unfollowLoading} onClick={onClickButton}>
       {isFollowing ? '언팔로우' : '팔로우'}

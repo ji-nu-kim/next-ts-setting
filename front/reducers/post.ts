@@ -1,9 +1,7 @@
-import { ICommentProps } from '../interfaces/db';
 import { actionTypesPost, PostState, ActionsPost } from '../interfaces/index';
 import { HYDRATE } from 'next-redux-wrapper';
-import shortId from 'shortid';
+
 import produce from 'immer';
-import faker from 'faker';
 
 export const initialState: PostState = {
   mainPosts: [],
@@ -45,60 +43,6 @@ export const initialState: PostState = {
   loadPostOneDone: false,
   loadPostOneError: null,
 };
-
-export const generateDummyPost = (number: number) =>
-  Array(number)
-    .fill(null)
-    .map(() => ({
-      id: shortId.generate(),
-      User: {
-        id: shortId.generate(),
-        nickname: faker.name.findName(),
-      },
-      content: faker.lorem.paragraph(),
-      Images: [
-        {
-          src: faker.image.image(),
-        },
-      ],
-      Comments: [
-        {
-          id: shortId.generate(),
-          content: faker.lorem.sentence(),
-          postId: shortId.generate(),
-          User: {
-            id: shortId.generate(),
-            nickname: faker.name.findName(),
-          },
-        },
-      ],
-    }));
-
-const dummyPost = (data: {
-  postId: string;
-  content: string;
-  userId: string;
-}) => ({
-  id: data.postId,
-  content: data.content,
-  User: {
-    id: data.userId,
-    nickname: 'dummy',
-  },
-  Images: [],
-  Comments: [],
-});
-
-const dummyComment = (data: ICommentProps) => ({
-  id: shortId.generate(),
-  content: data.comment,
-  postId: data.postId,
-  User: {
-    id: data.userId,
-    nickname: 'dummy',
-  },
-});
-
 interface HydratePayload {
   reducer: PostState;
 }
@@ -119,7 +63,8 @@ const reducer = (
       case actionTypesPost.ADD_POST_SUCCESS:
         draft.addPostLoading = false;
         draft.addPostDone = true;
-        draft.mainPosts.unshift(dummyPost(action.data));
+        draft.imagePaths = [];
+        draft.mainPosts.unshift(action.data);
         break;
       case actionTypesPost.ADD_POST_ERROR:
         draft.addPostLoading = false;
@@ -134,7 +79,9 @@ const reducer = (
       case actionTypesPost.REMOVE_POST_SUCCESS:
         draft.removePostLoading = false;
         draft.removePostDone = true;
-        draft.mainPosts = draft.mainPosts.filter(v => v.id !== action.data);
+        draft.mainPosts = draft.mainPosts.filter(
+          v => v.id !== action.data.postId
+        );
         break;
       case actionTypesPost.REMOVE_POST_ERROR:
         draft.removePostLoading = false;
@@ -149,8 +96,8 @@ const reducer = (
       case actionTypesPost.LOAD_POSTS_SUCCESS:
         draft.loadPostLoading = false;
         draft.loadPostDone = true;
-        draft.mainPosts = action.data.concat(draft.mainPosts);
-        draft.hasMorePost = draft.mainPosts.length < 50;
+        draft.mainPosts = draft.mainPosts.concat(action.data);
+        draft.hasMorePost = action.data.length === 10;
         break;
       case actionTypesPost.LOAD_POSTS_ERROR:
         draft.loadPostLoading = false;
@@ -165,14 +112,89 @@ const reducer = (
       case actionTypesPost.ADD_COMMENT_SUCCESS: {
         draft.addCommentLoading = false;
         draft.addCommentDone = true;
-        const post = draft.mainPosts.find(v => v.id === action.data.postId);
-        post?.Comments.unshift(dummyComment(action.data));
+        const post = draft.mainPosts.find(v => v.id === action.data.PostId);
+        if (post) {
+          post.Comments.unshift(action.data);
+        }
         break;
       }
       case actionTypesPost.ADD_COMMENT_ERROR:
         draft.addCommentLoading = false;
         draft.addCommentError = action.error;
         break;
+
+      case actionTypesPost.LIKE_POST_REQUEST:
+        draft.likePostLoading = true;
+        draft.likePostDone = false;
+        draft.likePostError = null;
+        break;
+      case actionTypesPost.LIKE_POST_SUCCESS: {
+        console.log(action.data);
+        const post = draft.mainPosts.find(v => v.id === action.data.postId);
+        post?.Likers.push({ id: action.data.userId });
+        draft.likePostLoading = false;
+        draft.likePostDone = true;
+        break;
+      }
+      case actionTypesPost.LIKE_POST_ERROR:
+        draft.likePostLoading = false;
+        draft.likePostError = action.error;
+        break;
+      case actionTypesPost.UNLIKE_POST_REQUEST:
+        draft.unlikePostLoading = true;
+        draft.unlikePostDone = false;
+        draft.unlikePostError = null;
+        break;
+      case actionTypesPost.UNLIKE_POST_SUCCESS: {
+        const post = draft.mainPosts.find(v => v.id === action.data.postId);
+        if (post) {
+          post.Likers = post.Likers.filter(v => v.id !== action.data.userId);
+        }
+        draft.unlikePostLoading = false;
+        draft.unlikePostDone = true;
+        break;
+      }
+      case actionTypesPost.UNLIKE_POST_ERROR:
+        draft.unlikePostLoading = false;
+        draft.unlikePostError = action.error;
+        break;
+
+      case actionTypesPost.UPLOAD_IMAGES_REQUEST:
+        draft.uploadImagesLoading = true;
+        draft.uploadImagesDone = false;
+        draft.uploadImagesError = null;
+        break;
+      case actionTypesPost.UPLOAD_IMAGES_SUCCESS: {
+        draft.imagePaths = action.data;
+        draft.uploadImagesLoading = false;
+        draft.uploadImagesDone = true;
+        break;
+      }
+      case actionTypesPost.UPLOAD_IMAGES_ERROR:
+        draft.uploadImagesLoading = false;
+        draft.uploadImagesError = action.error;
+        break;
+
+      case actionTypesPost.RETWEET_REQUEST:
+        draft.retweetLoading = true;
+        draft.retweetDone = false;
+        draft.retweetError = null;
+        break;
+      case actionTypesPost.RETWEET_SUCCESS: {
+        draft.retweetLoading = false;
+        draft.retweetDone = true;
+        draft.mainPosts.unshift(action.data);
+        break;
+      }
+      case actionTypesPost.RETWEET_ERROR:
+        draft.retweetLoading = false;
+        draft.retweetError = action.error;
+        break;
+
+      case actionTypesPost.REMOVE_IMAGE:
+        draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.data);
+        break;
+
       default:
         break;
     }

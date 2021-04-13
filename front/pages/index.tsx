@@ -6,16 +6,24 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { RootStateInterface } from '../interfaces/RootState';
 import { loadPostsRequestAction } from 'actions/actionPost';
+import { loadMyInfoRequestAction } from 'actions/actionUser';
 
 function Home() {
   const dispatch = useDispatch();
-  const { logInDone } = useSelector((state: RootStateInterface) => state.user);
-  const { mainPosts, hasMorePost, loadPostLoading } = useSelector(
+  const me = useSelector((state: RootStateInterface) => state.user.me);
+  const { mainPosts, hasMorePost, loadPostLoading, retweetError } = useSelector(
     (state: RootStateInterface) => state.post
   );
 
   useEffect(() => {
-    dispatch(loadPostsRequestAction());
+    if (retweetError) {
+      alert(retweetError);
+    }
+  }, [retweetError]);
+
+  useEffect(() => {
+    dispatch(loadMyInfoRequestAction());
+    dispatch(loadPostsRequestAction({ postId: 0 }));
   }, []);
 
   useEffect(() => {
@@ -25,18 +33,19 @@ function Home() {
         document.documentElement.scrollHeight - 300
       ) {
         if (hasMorePost && !loadPostLoading) {
-          dispatch(loadPostsRequestAction());
+          const lastId = mainPosts[mainPosts.length - 1].id;
+          dispatch(loadPostsRequestAction({ postId: lastId }));
         }
       }
     }
     window.addEventListener('scroll', onScroll);
 
     return () => window.removeEventListener('scroll', onScroll);
-  }, [hasMorePost, loadPostLoading]);
+  }, [hasMorePost, loadPostLoading, mainPosts]);
 
   return (
     <AppLayout>
-      {logInDone && <PostForm />}
+      {me && <PostForm />}
       {mainPosts.map(post => (
         <PostCard key={post.id} post={post} />
       ))}

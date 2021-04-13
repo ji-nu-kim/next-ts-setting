@@ -1,14 +1,33 @@
 import { StopOutlined } from '@ant-design/icons';
-import { IUser } from '../interfaces/db';
+import {
+  removeFollowerRequestAction,
+  unfollowRequestAction,
+} from 'actions/actionUser';
 import { Button, Card, List } from 'antd';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 
+type Headers = '팔로잉' | '팔로워';
 interface FollowListProps {
-  header: string;
-  data: IUser['Followers'] | IUser['Followings'] | undefined;
+  header: Headers;
+  data: { id: number; nickname?: string }[] | undefined;
 }
 
 function FollowList({ header, data }: FollowListProps) {
+  const dispatch = useDispatch();
+
+  const onClickDelete = useCallback(
+    (id: number) => () => {
+      if (header === '팔로잉') {
+        return dispatch(unfollowRequestAction({ userId: id }));
+      }
+      if (header === '팔로워') {
+        return dispatch(removeFollowerRequestAction({ userId: id }));
+      }
+    },
+    []
+  );
+
   const listMarginTop = useMemo(
     () => ({
       marginTop: '20px',
@@ -42,7 +61,11 @@ function FollowList({ header, data }: FollowListProps) {
       dataSource={data}
       renderItem={item => (
         <List.Item style={listMarginTop}>
-          <Card actions={[<StopOutlined key="stop" />]}>
+          <Card
+            actions={[
+              <StopOutlined key="stop" onClick={onClickDelete(item.id)} />,
+            ]}
+          >
             <Card.Meta description={item.nickname} />
           </Card>
         </List.Item>

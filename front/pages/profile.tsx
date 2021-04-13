@@ -3,17 +3,26 @@ import FollowList from '../components/FollowList';
 import NicknameEditForm from '../components/NicknameEditForm';
 import { RootStateInterface } from '../interfaces/RootState';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import Router from 'next/router';
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  loadFollowersRequestAction,
+  loadFollowingsRequestAction,
+} from 'actions/actionUser';
 
 function Profile() {
-  const router = useRouter();
+  const dispatch = useDispatch();
   const { me } = useSelector((state: RootStateInterface) => state.user);
 
   useEffect(() => {
+    dispatch(loadFollowersRequestAction());
+    dispatch(loadFollowingsRequestAction());
+  }, []);
+
+  useEffect(() => {
     if (!me) {
-      router.push('/');
+      Router.push('/');
     }
   }, [me]);
 

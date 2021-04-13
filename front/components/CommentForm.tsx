@@ -32,11 +32,10 @@ function CommentForm({ post }: CommentFormProps) {
         addCommentRequestAction({
           comment: commentText,
           postId: post.id,
-          userId: id,
         })
       );
     }
-  }, [commentText, post, id]);
+  }, [commentText, post]);
 
   return (
     <Form onFinish={onSubmitComment}>

@@ -3,7 +3,7 @@ import { IPost } from '../db';
 export interface PostState {
   singlePost: any;
   mainPosts: IPost[];
-  imagePaths: { src: string }[];
+  imagePaths: string[];
   hasMorePost: boolean;
   postAdded: boolean;
 

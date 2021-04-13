@@ -67,7 +67,6 @@ const reducer = (
         draft.logInLoading = false;
         draft.logInError = action.error;
         break;
-
       case actionTypesUser.LOG_OUT_REQUEST:
         draft.logOutLoading = true;
         draft.logOutDone = false;
@@ -82,6 +81,21 @@ const reducer = (
       case actionTypesUser.LOG_OUT_ERROR:
         draft.logOutLoading = false;
         draft.logOutError = action.error;
+        break;
+
+      case actionTypesUser.LOAD_MY_INFO_REQUEST:
+        draft.loadMyInfoLoading = true;
+        draft.loadMyInfoDone = false;
+        draft.loadMyInfoError = null;
+        break;
+      case actionTypesUser.LOAD_MY_INFO_SUCCESS:
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoDone = true;
+        draft.me = action.data;
+        break;
+      case actionTypesUser.LOAD_MY_INFO_ERROR:
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoError = action.error;
         break;
 
       case actionTypesUser.SIGN_UP_REQUEST:
@@ -107,10 +121,7 @@ const reducer = (
         draft.followLoading = false;
         draft.followDone = true;
         if (draft.me) {
-          draft.me.Followings.push({
-            id: action.data.id,
-            nickname: action.data.nickname,
-          });
+          draft.me.Followings.push({ id: action.data.userId });
         }
         break;
       case actionTypesUser.FOLLOW_ERROR:
@@ -127,7 +138,7 @@ const reducer = (
         draft.unfollowDone = true;
         if (draft.me) {
           draft.me.Followings = draft.me.Followings.filter(
-            v => v.id !== action.data
+            v => v.id !== action.data.userId
           );
         }
         break;
@@ -136,15 +147,84 @@ const reducer = (
         draft.unfollowError = action.error;
         break;
 
+      case actionTypesUser.LOAD_FOLLOWERS_REQUEST:
+        draft.loadFollowersLoading = true;
+        draft.loadFollowersDone = false;
+        draft.loadFollowersError = null;
+        break;
+      case actionTypesUser.LOAD_FOLLOWERS_SUCCESS:
+        draft.loadFollowersLoading = false;
+        draft.loadFollowersDone = true;
+        if (draft.me) {
+          draft.me.Followers = action.data;
+        }
+        break;
+      case actionTypesUser.LOAD_FOLLOWERS_ERROR:
+        draft.loadFollowersLoading = false;
+        draft.loadFollowersError = action.error;
+        break;
+      case actionTypesUser.LOAD_FOLLOWINGS_REQUEST:
+        draft.loadFollowingsLoading = true;
+        draft.loadFollowingsDone = false;
+        draft.loadFollowingsError = null;
+        break;
+      case actionTypesUser.LOAD_FOLLOWINGS_SUCCESS:
+        draft.loadFollowingsLoading = false;
+        draft.loadFollowingsDone = true;
+        if (draft.me) {
+          draft.me.Followings = action.data;
+        }
+        break;
+      case actionTypesUser.LOAD_FOLLOWINGS_ERROR:
+        draft.loadFollowingsLoading = false;
+        draft.loadFollowingsError = action.error;
+        break;
+      case actionTypesUser.REMOVE_FOLLOWER_REQUEST:
+        draft.removeFollowerLoading = true;
+        draft.removeFollowerDone = false;
+        draft.removeFollowerError = null;
+        break;
+      case actionTypesUser.REMOVE_FOLLOWER_SUCCESS:
+        draft.removeFollowerLoading = false;
+        draft.removeFollowerDone = true;
+        if (draft.me) {
+          draft.me.Followers = draft.me.Followers.filter(
+            v => v.id !== action.data.userId
+          );
+        }
+        break;
+      case actionTypesUser.REMOVE_FOLLOWER_ERROR:
+        draft.removeFollowerLoading = false;
+        draft.removeFollowerError = action.error;
+        break;
+
+      case actionTypesUser.CHANGE_NICKNAME_REQUEST:
+        draft.changeNicknameLoading = true;
+        draft.changeNicknameDone = false;
+        draft.changeNicknameError = null;
+        break;
+      case actionTypesUser.CHANGE_NICKNAME_SUCCESS:
+        draft.changeNicknameLoading = false;
+        draft.changeNicknameDone = true;
+        if (draft.me) {
+          draft.me.nickname = action.data.nickname;
+        }
+        break;
+      case actionTypesUser.CHANGE_NICKNAME_ERROR:
+        draft.changeNicknameLoading = false;
+        draft.changeNicknameError = action.error;
+        break;
+
       case actionTypesUser.ADD_POST_TO_ME:
         if (draft.me) {
           draft.me.Posts.unshift({ id: action.data });
         }
         break;
-
       case actionTypesUser.REMOVE_POST_OF_ME:
         if (draft.me) {
-          draft.me.Posts = draft.me?.Posts.filter(v => v.id !== action.data);
+          draft.me.Posts = draft.me.Posts.filter(
+            v => v.id !== action.data.postId
+          );
         }
         break;
 
