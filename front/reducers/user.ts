@@ -51,8 +51,8 @@ const reducer = (
 ): UserState => {
   return produce(state, draft => {
     switch (action.type) {
-      case HYDRATE:
-        return { ...state, ...action.payload.reducer };
+      // case HYDRATE:
+      //   return { ...state, ...action.payload.reducer };
       case actionTypesUser.LOG_IN_REQUEST:
         draft.logInLoading = true;
         draft.logInDone = false;

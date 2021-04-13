@@ -53,8 +53,8 @@ const reducer = (
 ): PostState => {
   return produce(state, draft => {
     switch (action.type) {
-      case HYDRATE:
-        return { ...state, ...action.payload.reducer };
+      // case HYDRATE:
+      //   return { ...state, ...action.payload.reducer };
       case actionTypesPost.ADD_POST_REQUEST:
         draft.addPostLoading = true;
         draft.addPostDone = false;

@@ -3,10 +3,13 @@ import PostCard from '../components/PostCard';
 import PostForm from '../components/PostForm';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { END } from 'redux-saga';
 
 import { RootStateInterface } from '../interfaces/RootState';
 import { loadPostsRequestAction } from 'actions/actionPost';
 import { loadMyInfoRequestAction } from 'actions/actionUser';
+import wrapper from 'store/configureStore';
+import { GetServerSideProps } from 'next';
 
 function Home() {
   const dispatch = useDispatch();
@@ -20,11 +23,6 @@ function Home() {
       alert(retweetError);
     }
   }, [retweetError]);
-
-  useEffect(() => {
-    dispatch(loadMyInfoRequestAction());
-    dispatch(loadPostsRequestAction({ postId: 0 }));
-  }, []);
 
   useEffect(() => {
     function onScroll() {
@@ -52,5 +50,14 @@ function Home() {
     </AppLayout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
+  async context => {
+    context.store.dispatch(loadMyInfoRequestAction());
+    context.store.dispatch(loadPostsRequestAction({ postId: 0 }));
+    context.store.dispatch(END);
+    await context.store.sagaTask.toPromise();
+  }
+);
 
 export default Home;
