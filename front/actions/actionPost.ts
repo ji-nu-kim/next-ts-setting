@@ -7,6 +7,9 @@ import {
   IRemovePostReqeust,
   IRemovePostSuccess,
   IRemovePostError,
+  IUpdatePostReqeust,
+  IUpdatePostSuccess,
+  IUpdatePostError,
   IAddCommentReqeust,
   IAddCommentSuccess,
   IAddCommentError,
@@ -74,6 +77,30 @@ export const removePostSuccessAction = (data: {
 export const removePostErrorAction = (error: Error): IRemovePostError => {
   return {
     type: actionTypesPost.REMOVE_POST_ERROR,
+    error,
+  };
+};
+export const updatePostRequestAction = (data: {
+  postId: number;
+  content: string;
+}): IUpdatePostReqeust => {
+  return {
+    type: actionTypesPost.UPDATE_POST_REQUEST,
+    data,
+  };
+};
+export const updatePostSuccessAction = (data: {
+  postId: number;
+  content: string;
+}): IUpdatePostSuccess => {
+  return {
+    type: actionTypesPost.UPDATE_POST_SUCCESS,
+    data,
+  };
+};
+export const updatePostErrorAction = (error: Error): IUpdatePostError => {
+  return {
+    type: actionTypesPost.UPDATE_POST_ERROR,
     error,
   };
 };

@@ -24,7 +24,9 @@ const User = () => {
   const { mainPosts, hasMorePost, loadPostLoading } = useSelector(
     (state: RootStateInterface) => state.post
   );
-  const { userInfo } = useSelector((state: RootStateInterface) => state.user);
+  const { userInfo, me } = useSelector(
+    (state: RootStateInterface) => state.user
+  );
 
   useEffect(() => {
     function onScroll() {
@@ -71,7 +73,7 @@ const User = () => {
           content={`https://nodebird.com/post/${userId}`}
         />
       </Head>
-      {userInfo ? (
+      {userInfo && userInfo.id !== me?.id ? (
         <Card
           actions={[
             <div key="twit">

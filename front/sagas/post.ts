@@ -11,6 +11,7 @@ import {
   IRemovePostReqeust,
   IRetweetReqeust,
   IUnlikePostReqeust,
+  IUpdatePostReqeust,
   IUploadImagesReqeust,
 } from '../interfaces/post/postAction.interfaces';
 import { actionTypesUser } from '../interfaces/user/userAction.interfaces';
@@ -58,6 +59,29 @@ function* removePost(action: IRemovePostReqeust) {
   } catch (error) {
     yield put({
       type: actionTypesPost.REMOVE_POST_ERROR,
+      error: error.response.data,
+    });
+  }
+}
+
+function updatePostAPI(data: { postId: number; content: string }) {
+  console.log(data.content);
+  return axios.patch(`/post/${data.postId}`, data);
+}
+
+function* updatePost(action: IUpdatePostReqeust) {
+  try {
+    const result: { data: { postId: number; content: string } } = yield call(
+      updatePostAPI,
+      action.data
+    );
+    yield put({
+      type: actionTypesPost.UPDATE_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    yield put({
+      type: actionTypesPost.UPDATE_POST_ERROR,
       error: error.response.data,
     });
   }
@@ -253,6 +277,10 @@ function* watchRemovePost() {
   yield takeLatest(actionTypesPost.REMOVE_POST_REQUEST, removePost);
 }
 
+function* watchUpdatePost() {
+  yield takeLatest(actionTypesPost.UPDATE_POST_REQUEST, updatePost);
+}
+
 function* watchLoadPost() {
   yield takeLatest(actionTypesPost.LOAD_POST_REQUEST, loadPost);
 }
@@ -296,6 +324,7 @@ export default function* postSaga() {
   yield all([
     fork(watchAddPost),
     fork(watchRemovePost),
+    fork(watchUpdatePost),
     fork(watchLoadPost),
     fork(watchLoadPosts),
     fork(watchLoadUserPosts),

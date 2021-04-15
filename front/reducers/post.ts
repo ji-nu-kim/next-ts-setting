@@ -16,6 +16,9 @@ export const initialState: PostState = {
   removePostLoading: false,
   removePostDone: false,
   removePostError: null,
+  updatePostLoading: false,
+  updatePostDone: false,
+  updatePostError: null,
 
   addCommentLoading: false,
   addCommentDone: false,
@@ -70,7 +73,6 @@ const reducer = (
         draft.addPostLoading = false;
         draft.addPostError = action.error;
         break;
-
       case actionTypesPost.REMOVE_POST_REQUEST:
         draft.removePostLoading = true;
         draft.removePostDone = false;
@@ -86,6 +88,24 @@ const reducer = (
       case actionTypesPost.REMOVE_POST_ERROR:
         draft.removePostLoading = false;
         draft.removePostError = action.error;
+        break;
+      case actionTypesPost.UPDATE_POST_REQUEST:
+        draft.updatePostLoading = true;
+        draft.updatePostDone = false;
+        draft.updatePostError = null;
+        break;
+      case actionTypesPost.UPDATE_POST_SUCCESS: {
+        draft.updatePostLoading = false;
+        draft.updatePostDone = true;
+        const post = draft.mainPosts.find(v => v.id === action.data.postId);
+        if (post) {
+          post.content = action.data.content;
+        }
+        break;
+      }
+      case actionTypesPost.UPDATE_POST_ERROR:
+        draft.updatePostLoading = false;
+        draft.updatePostError = action.error;
         break;
 
       case actionTypesPost.LOAD_POST_REQUEST:

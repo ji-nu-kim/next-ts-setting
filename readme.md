@@ -72,3 +72,8 @@
 
 - getstaticpaths를 사용해 여러 페이지를 html파일로 만들어놓을 수 있다
 - 수 많은 페이지를 만들어놓기에는 서버에 부담이간다
+
+# aws사용하기
+
+- ec2 ubuntu server 생성
+-

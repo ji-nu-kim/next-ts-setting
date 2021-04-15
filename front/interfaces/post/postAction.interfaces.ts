@@ -7,6 +7,9 @@ export const actionTypesPost = {
   REMOVE_POST_REQUEST: 'REMOVE_POST_REQUEST',
   REMOVE_POST_SUCCESS: 'REMOVE_POST_SUCCESS',
   REMOVE_POST_ERROR: 'REMOVE_POST_ERROR',
+  UPDATE_POST_REQUEST: 'UPDATE_POST_REQUEST',
+  UPDATE_POST_SUCCESS: 'UPDATE_POST_SUCCESS',
+  UPDATE_POST_ERROR: 'UPDATE_POST_ERROR',
   ADD_COMMENT_REQUEST: 'ADD_COMMENT_REQUEST',
   ADD_COMMENT_SUCCESS: 'ADD_COMMENT_SUCCESS',
   ADD_COMMENT_ERROR: 'ADD_COMMENT_ERROR',
@@ -59,6 +62,18 @@ export interface IRemovePostSuccess {
 }
 export interface IRemovePostError {
   type: typeof actionTypesPost.REMOVE_POST_ERROR;
+  error: Error;
+}
+export interface IUpdatePostReqeust {
+  type: typeof actionTypesPost.UPDATE_POST_REQUEST;
+  data: { postId: number; content: string };
+}
+export interface IUpdatePostSuccess {
+  type: typeof actionTypesPost.UPDATE_POST_SUCCESS;
+  data: { postId: number; content: string };
+}
+export interface IUpdatePostError {
+  type: typeof actionTypesPost.UPDATE_POST_ERROR;
   error: Error;
 }
 
@@ -186,6 +201,9 @@ export type ActionsPost =
   | IRemovePostReqeust
   | IRemovePostSuccess
   | IRemovePostError
+  | IUpdatePostReqeust
+  | IUpdatePostSuccess
+  | IUpdatePostError
   | ILoadPostReqeust
   | ILoadPostSuccess
   | ILoadPostError

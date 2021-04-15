@@ -13,6 +13,9 @@ export interface PostState {
   removePostLoading: boolean;
   removePostDone: boolean;
   removePostError: any;
+  updatePostLoading: boolean;
+  updatePostDone: boolean;
+  updatePostError: any;
 
   addCommentLoading: boolean;
   addCommentDone: boolean;

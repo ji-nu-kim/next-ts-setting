@@ -3,6 +3,7 @@ import {
   removePostRequestAction,
   retweetRequestAction,
   unlikePostRequestAction,
+  updatePostRequestAction,
 } from '../actions/actionPost';
 import {
   EllipsisOutlined,
@@ -34,7 +35,25 @@ function PostCard({ post }: postCardProps) {
   const { removePostLoading } = useSelector(
     (state: RootStateInterface) => state.post
   );
+  const [editMode, setEditMode] = useState(false);
   const liked = post.Likers.find(v => v.id === id);
+
+  const onChangePost = useCallback(() => {
+    setEditMode(true);
+  }, []);
+
+  const onCancelUpdatePost = useCallback(() => {
+    setEditMode(false);
+  }, []);
+
+  const onChangeUpdatePost = useCallback(
+    editText => () => {
+      return dispatch(
+        updatePostRequestAction({ postId: post.id, content: editText })
+      );
+    },
+    [post]
+  );
 
   const onLike = useCallback(() => {
     if (!id) {
@@ -87,7 +106,9 @@ function PostCard({ post }: postCardProps) {
               <Button.Group>
                 {id && id === post.User.id ? (
                   <>
-                    <Button>수정</Button>
+                    {!post.RetweetId && (
+                      <Button onClick={onChangePost}>수정</Button>
+                    )}
                     <Button
                       danger
                       loading={removePostLoading}
@@ -130,7 +151,13 @@ function PostCard({ post }: postCardProps) {
                 </Link>
               }
               title={post.Retweet.User.nickname}
-              description={<PostCardContent postData={post.Retweet.content} />}
+              description={
+                <PostCardContent
+                  postData={post.Retweet.content}
+                  onCancelUpdatePost={onCancelUpdatePost}
+                  onChangeUpdatePost={onChangeUpdatePost}
+                />
+              }
             />
           </Card>
         ) : (
@@ -147,7 +174,14 @@ function PostCard({ post }: postCardProps) {
                 </Link>
               }
               title={post.User.nickname}
-              description={<PostCardContent postData={post.content} />}
+              description={
+                <PostCardContent
+                  onCancelUpdatePost={onCancelUpdatePost}
+                  onChangeUpdatePost={onChangeUpdatePost}
+                  editMode={editMode}
+                  postData={post.content}
+                />
+              }
             />
           </>
         )}
