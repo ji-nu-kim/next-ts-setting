@@ -10,9 +10,18 @@ export const actionTypesPost = {
   ADD_COMMENT_REQUEST: 'ADD_COMMENT_REQUEST',
   ADD_COMMENT_SUCCESS: 'ADD_COMMENT_SUCCESS',
   ADD_COMMENT_ERROR: 'ADD_COMMENT_ERROR',
+  LOAD_POST_REQUEST: 'LOAD_POST_REQUEST',
+  LOAD_POST_SUCCESS: 'LOAD_POST_SUCCESS',
+  LOAD_POST_ERROR: 'LOAD_POST_ERROR',
   LOAD_POSTS_REQUEST: 'LOAD_POSTS_REQUEST',
   LOAD_POSTS_SUCCESS: 'LOAD_POSTS_SUCCESS',
   LOAD_POSTS_ERROR: 'LOAD_POSTS_ERROR',
+  LOAD_USER_POSTS_REQUEST: 'LOAD_USER_POSTS_REQUEST',
+  LOAD_USER_POSTS_SUCCESS: 'LOAD_USER_POSTS_SUCCESS',
+  LOAD_USER_POSTS_ERROR: 'LOAD_USER_POSTS_ERROR',
+  LOAD_HASHTAG_POSTS_REQUEST: 'LOAD_HASHTAG_POSTS_REQUEST',
+  LOAD_HASHTAG_POSTS_SUCCESS: 'LOAD_HASHTAG_POSTS_SUCCESS',
+  LOAD_HASHTAG_POSTS_ERROR: 'LOAD_HASHTAG_POSTS_ERROR',
   LIKE_POST_REQUEST: 'LIKE_POST_REQUEST',
   LIKE_POST_SUCCESS: 'LIKE_POST_SUCCESS',
   LIKE_POST_ERROR: 'LIKE_POST_ERROR',
@@ -53,6 +62,18 @@ export interface IRemovePostError {
   error: Error;
 }
 
+export interface ILoadPostReqeust {
+  type: typeof actionTypesPost.LOAD_POST_REQUEST;
+  data: { postId: number };
+}
+export interface ILoadPostSuccess {
+  type: typeof actionTypesPost.LOAD_POST_SUCCESS;
+  data: IPost;
+}
+export interface ILoadPostError {
+  type: typeof actionTypesPost.LOAD_POST_ERROR;
+  error: Error;
+}
 export interface ILoadPostsReqeust {
   type: typeof actionTypesPost.LOAD_POSTS_REQUEST;
   data: { postId: number };
@@ -63,6 +84,30 @@ export interface ILoadPostsSuccess {
 }
 export interface ILoadPostsError {
   type: typeof actionTypesPost.LOAD_POSTS_ERROR;
+  error: Error;
+}
+export interface ILoadUserPostsReqeust {
+  type: typeof actionTypesPost.LOAD_USER_POSTS_REQUEST;
+  data: { postId: number; userId: number };
+}
+export interface ILoadUserPostsSuccess {
+  type: typeof actionTypesPost.LOAD_USER_POSTS_SUCCESS;
+  data: IPost[];
+}
+export interface ILoadUserPostsError {
+  type: typeof actionTypesPost.LOAD_USER_POSTS_ERROR;
+  error: Error;
+}
+export interface ILoadHashtagPostsReqeust {
+  type: typeof actionTypesPost.LOAD_HASHTAG_POSTS_REQUEST;
+  data: { postId: number; hashtag: string };
+}
+export interface ILoadHashtagPostsSuccess {
+  type: typeof actionTypesPost.LOAD_HASHTAG_POSTS_SUCCESS;
+  data: IPost[];
+}
+export interface ILoadHashtagPostsError {
+  type: typeof actionTypesPost.LOAD_HASHTAG_POSTS_ERROR;
   error: Error;
 }
 
@@ -141,9 +186,18 @@ export type ActionsPost =
   | IRemovePostReqeust
   | IRemovePostSuccess
   | IRemovePostError
+  | ILoadPostReqeust
+  | ILoadPostSuccess
+  | ILoadPostError
   | ILoadPostsReqeust
   | ILoadPostsSuccess
   | ILoadPostsError
+  | ILoadUserPostsReqeust
+  | ILoadUserPostsSuccess
+  | ILoadUserPostsError
+  | ILoadHashtagPostsReqeust
+  | ILoadHashtagPostsSuccess
+  | ILoadHashtagPostsError
   | IAddCommentReqeust
   | IAddCommentSuccess
   | IAddCommentError

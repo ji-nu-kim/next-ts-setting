@@ -22,9 +22,9 @@ export interface UserState {
   loadMyInfoLoading: boolean;
   loadMyInfoDone: boolean;
   loadMyInfoError: any;
-  loadUserLoading: boolean;
-  loadUserDone: boolean;
-  loadUserError: any;
+  loadUserInfoLoading: boolean;
+  loadUserInfoDone: boolean;
+  loadUserInfoError: any;
   followLoading: boolean;
   followDone: boolean;
   followError: any;

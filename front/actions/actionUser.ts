@@ -10,6 +10,9 @@ import {
   ILoadMyInfoRequest,
   ILoadMyInfoSuccess,
   ILoadMyInfoError,
+  ILoadUserInfoRequest,
+  ILoadUserInfoSuccess,
+  ILoadUserInfoError,
   ISignUpRequest,
   ISignUpSuccess,
   ISignUpError,
@@ -87,6 +90,33 @@ export const loadMyInfoSuccessAction = (data: IUser): ILoadMyInfoSuccess => {
 export const loadMyInfoErrorAction = (error: Error): ILoadMyInfoError => {
   return {
     type: actionTypesUser.LOAD_MY_INFO_ERROR,
+    error,
+  };
+};
+export const loadUserInfoRequestAction = (data: {
+  userId: number;
+}): ILoadUserInfoRequest => {
+  return {
+    type: actionTypesUser.LOAD_USER_INFO_REQUEST,
+    data,
+  };
+};
+export const loadUserInfoSuccessAction = (data: {
+  id: number;
+  nickname: string;
+  email: string;
+  Posts: number;
+  Followings: number;
+  Followers: number;
+}): ILoadUserInfoSuccess => {
+  return {
+    type: actionTypesUser.LOAD_USER_INFO_SUCCESS,
+    data,
+  };
+};
+export const loadUserInfoErrorAction = (error: Error): ILoadUserInfoError => {
+  return {
+    type: actionTypesUser.LOAD_USER_INFO_ERROR,
     error,
   };
 };

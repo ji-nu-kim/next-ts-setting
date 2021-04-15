@@ -4,6 +4,7 @@ import PostForm from '../components/PostForm';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { END } from 'redux-saga';
+import axios from 'axios';
 
 import { RootStateInterface } from '../interfaces/RootState';
 import { loadPostsRequestAction } from 'actions/actionPost';
@@ -53,6 +54,11 @@ function Home() {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   async context => {
+    const cookie = context.req ? context.req.headers.cookie : '';
+    axios.defaults.headers.Cookie = '';
+    if (context.req && cookie) {
+      axios.defaults.headers.Cookie = cookie;
+    }
     context.store.dispatch(loadMyInfoRequestAction());
     context.store.dispatch(loadPostsRequestAction({ postId: 0 }));
     context.store.dispatch(END);

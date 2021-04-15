@@ -24,9 +24,9 @@ export const initialState: UserState = {
   loadMyInfoLoading: false,
   loadMyInfoDone: false,
   loadMyInfoError: null,
-  loadUserLoading: false,
-  loadUserDone: false,
-  loadUserError: null,
+  loadUserInfoLoading: false,
+  loadUserInfoDone: false,
+  loadUserInfoError: null,
   followLoading: false,
   followDone: false,
   followError: null,
@@ -96,6 +96,20 @@ const reducer = (
       case actionTypesUser.LOAD_MY_INFO_ERROR:
         draft.loadMyInfoLoading = false;
         draft.loadMyInfoError = action.error;
+        break;
+      case actionTypesUser.LOAD_USER_INFO_REQUEST:
+        draft.loadUserInfoLoading = true;
+        draft.loadUserInfoDone = false;
+        draft.loadUserInfoError = null;
+        break;
+      case actionTypesUser.LOAD_USER_INFO_SUCCESS:
+        draft.loadUserInfoLoading = false;
+        draft.loadUserInfoDone = true;
+        draft.userInfo = action.data;
+        break;
+      case actionTypesUser.LOAD_USER_INFO_ERROR:
+        draft.loadUserInfoLoading = false;
+        draft.loadUserInfoError = action.error;
         break;
 
       case actionTypesUser.SIGN_UP_REQUEST:

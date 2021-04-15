@@ -10,9 +10,18 @@ import {
   IAddCommentReqeust,
   IAddCommentSuccess,
   IAddCommentError,
+  ILoadPostReqeust,
+  ILoadPostSuccess,
+  ILoadPostError,
   ILoadPostsReqeust,
   ILoadPostsSuccess,
   ILoadPostsError,
+  ILoadUserPostsReqeust,
+  ILoadUserPostsSuccess,
+  ILoadUserPostsError,
+  ILoadHashtagPostsReqeust,
+  ILoadHashtagPostsSuccess,
+  ILoadHashtagPostsError,
   ILikePostReqeust,
   ILikePostSuccess,
   ILikePostError,
@@ -69,6 +78,26 @@ export const removePostErrorAction = (error: Error): IRemovePostError => {
   };
 };
 
+export const loadPostRequestAction = (data: {
+  postId: number;
+}): ILoadPostReqeust => {
+  return {
+    type: actionTypesPost.LOAD_POST_REQUEST,
+    data,
+  };
+};
+export const loadPostSuccessAction = (data: IPost): ILoadPostSuccess => {
+  return {
+    type: actionTypesPost.LOAD_POST_SUCCESS,
+    data,
+  };
+};
+export const loadPostErrorAction = (error: Error): ILoadPostError => {
+  return {
+    type: actionTypesPost.LOAD_POST_ERROR,
+    error,
+  };
+};
 export const loadPostsRequestAction = (data: {
   postId: number;
 }): ILoadPostsReqeust => {
@@ -86,6 +115,54 @@ export const loadPostsSuccessAction = (data: IPost[]): ILoadPostsSuccess => {
 export const loadPostsErrorAction = (error: Error): ILoadPostsError => {
   return {
     type: actionTypesPost.LOAD_POSTS_ERROR,
+    error,
+  };
+};
+export const loadUserPostsRequestAction = (data: {
+  postId: number;
+  userId: number;
+}): ILoadUserPostsReqeust => {
+  return {
+    type: actionTypesPost.LOAD_USER_POSTS_REQUEST,
+    data,
+  };
+};
+export const loadUserPostsSuccessAction = (
+  data: IPost[]
+): ILoadUserPostsSuccess => {
+  return {
+    type: actionTypesPost.LOAD_USER_POSTS_SUCCESS,
+    data,
+  };
+};
+export const loadUserPostsErrorAction = (error: Error): ILoadUserPostsError => {
+  return {
+    type: actionTypesPost.LOAD_USER_POSTS_ERROR,
+    error,
+  };
+};
+export const loadHashtagPostsRequestAction = (data: {
+  postId: number;
+  hashtag: string;
+}): ILoadHashtagPostsReqeust => {
+  return {
+    type: actionTypesPost.LOAD_HASHTAG_POSTS_REQUEST,
+    data,
+  };
+};
+export const loadHashtagPostsSuccessAction = (
+  data: IPost[]
+): ILoadHashtagPostsSuccess => {
+  return {
+    type: actionTypesPost.LOAD_HASHTAG_POSTS_SUCCESS,
+    data,
+  };
+};
+export const loadHashtagPostsErrorAction = (
+  error: Error
+): ILoadHashtagPostsError => {
+  return {
+    type: actionTypesPost.LOAD_HASHTAG_POSTS_ERROR,
     error,
   };
 };

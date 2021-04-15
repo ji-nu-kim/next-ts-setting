@@ -4,7 +4,10 @@ import {
   IAddCommentReqeust,
   IAddPostReqeust,
   ILikePostReqeust,
+  ILoadHashtagPostsReqeust,
+  ILoadPostReqeust,
   ILoadPostsReqeust,
+  ILoadUserPostsReqeust,
   IRemovePostReqeust,
   IRetweetReqeust,
   IUnlikePostReqeust,
@@ -60,6 +63,25 @@ function* removePost(action: IRemovePostReqeust) {
   }
 }
 
+function loadPostAPI(data: { postId: number }) {
+  return axios.get(`/post/${data.postId}`);
+}
+
+function* loadPost(action: ILoadPostReqeust) {
+  try {
+    const result: { data: IPost } = yield call(loadPostAPI, action.data);
+    yield put({
+      type: actionTypesPost.LOAD_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    yield put({
+      type: actionTypesPost.LOAD_POST_ERROR,
+      error: error.response.data,
+    });
+  }
+}
+
 function loadPostsAPI(data: { postId: number }) {
   return axios.get(`/posts?lastId=${data.postId}`);
 }
@@ -74,6 +96,49 @@ function* loadPosts(action: ILoadPostsReqeust) {
   } catch (error) {
     yield put({
       type: actionTypesPost.LOAD_POSTS_ERROR,
+      error: error.response.data,
+    });
+  }
+}
+
+function loadUserPostsAPI(data: { postId: number; userId: number }) {
+  return axios.get(`/user/${data.userId}/posts?lastId=${data.postId}`);
+}
+
+function* loadUserPosts(action: ILoadUserPostsReqeust) {
+  try {
+    const result: { data: IPost[] } = yield call(loadUserPostsAPI, action.data);
+    yield put({
+      type: actionTypesPost.LOAD_USER_POSTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    yield put({
+      type: actionTypesPost.LOAD_USER_POSTS_ERROR,
+      error: error.response.data,
+    });
+  }
+}
+
+function loadHashtagPostsAPI(data: { postId: number; hashtag: string }) {
+  return axios.get(
+    `/hashtag/${encodeURIComponent(data.hashtag)}?lastId=${data.postId}`
+  );
+}
+
+function* loadHashtagPosts(action: ILoadHashtagPostsReqeust) {
+  try {
+    const result: { data: IPost[] } = yield call(
+      loadHashtagPostsAPI,
+      action.data
+    );
+    yield put({
+      type: actionTypesPost.LOAD_HASHTAG_POSTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    yield put({
+      type: actionTypesPost.LOAD_HASHTAG_POSTS_ERROR,
       error: error.response.data,
     });
   }
@@ -188,8 +253,23 @@ function* watchRemovePost() {
   yield takeLatest(actionTypesPost.REMOVE_POST_REQUEST, removePost);
 }
 
+function* watchLoadPost() {
+  yield takeLatest(actionTypesPost.LOAD_POST_REQUEST, loadPost);
+}
+
 function* watchLoadPosts() {
   yield takeLatest(actionTypesPost.LOAD_POSTS_REQUEST, loadPosts);
+}
+
+function* watchLoadUserPosts() {
+  yield takeLatest(actionTypesPost.LOAD_USER_POSTS_REQUEST, loadUserPosts);
+}
+
+function* watchLoadHashtagPosts() {
+  yield takeLatest(
+    actionTypesPost.LOAD_HASHTAG_POSTS_REQUEST,
+    loadHashtagPosts
+  );
 }
 
 function* watchAddComment() {
@@ -216,7 +296,10 @@ export default function* postSaga() {
   yield all([
     fork(watchAddPost),
     fork(watchRemovePost),
+    fork(watchLoadPost),
     fork(watchLoadPosts),
+    fork(watchLoadUserPosts),
+    fork(watchLoadHashtagPosts),
     fork(watchAddComment),
     fork(watchLikePost),
     fork(watchUnlikePost),

@@ -10,6 +10,9 @@ export const actionTypesUser = {
   LOAD_MY_INFO_REQUEST: 'LOAD_MY_INFO_REQUEST',
   LOAD_MY_INFO_SUCCESS: 'LOAD_MY_INFO_SUCCESS',
   LOAD_MY_INFO_ERROR: 'LOAD_MY_INFO_ERROR',
+  LOAD_USER_INFO_REQUEST: 'LOAD_USER_INFO_REQUEST',
+  LOAD_USER_INFO_SUCCESS: 'LOAD_USER_INFO_SUCCESS',
+  LOAD_USER_INFO_ERROR: 'LOAD_USER_INFO_ERROR',
   SIGN_UP_REQUEST: 'SIGN_UP_REQUEST',
   SIGN_UP_SUCCESS: 'SIGN_UP_SUCCESS',
   SIGN_UP_ERROR: 'SIGN_UP_ERROR',
@@ -66,6 +69,25 @@ export interface ILoadMyInfoSuccess {
 }
 export interface ILoadMyInfoError {
   type: typeof actionTypesUser.LOAD_MY_INFO_ERROR;
+  error: Error;
+}
+export interface ILoadUserInfoRequest {
+  type: typeof actionTypesUser.LOAD_USER_INFO_REQUEST;
+  data: { userId: number };
+}
+export interface ILoadUserInfoSuccess {
+  type: typeof actionTypesUser.LOAD_USER_INFO_SUCCESS;
+  data: {
+    id: number;
+    nickname: string;
+    email: string;
+    Posts: number;
+    Followings: number;
+    Followers: number;
+  };
+}
+export interface ILoadUserInfoError {
+  type: typeof actionTypesUser.LOAD_USER_INFO_ERROR;
   error: Error;
 }
 
@@ -174,6 +196,9 @@ export type ActionsUser =
   | ILoadMyInfoRequest
   | ILoadMyInfoSuccess
   | ILoadMyInfoError
+  | ILoadUserInfoRequest
+  | ILoadUserInfoSuccess
+  | ILoadUserInfoError
   | ISignUpRequest
   | ISignUpSuccess
   | ISignUpError

@@ -11,9 +11,11 @@ type Headers = '팔로잉' | '팔로워';
 interface FollowListProps {
   header: Headers;
   data: { id: number; nickname?: string }[] | undefined;
+  loading: boolean;
+  onClickMore: () => void;
 }
 
-function FollowList({ header, data }: FollowListProps) {
+function FollowList({ header, data, loading, onClickMore }: FollowListProps) {
   const dispatch = useDispatch();
 
   const onClickDelete = useCallback(
@@ -54,7 +56,9 @@ function FollowList({ header, data }: FollowListProps) {
             margin: '10px 0',
           }}
         >
-          <Button>더 보기</Button>
+          <Button loading={loading} onClick={onClickMore}>
+            더 보기
+          </Button>
         </div>
       }
       bordered

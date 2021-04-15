@@ -3,6 +3,7 @@ import {
   actionTypesUser,
   IChangeNicknameRequest,
   IFollowRequest,
+  ILoadUserInfoRequest,
   ILogInRequest,
   IRemoveFollowerRequest,
   ISignUpRequest,
@@ -62,6 +63,34 @@ function* loadMyInfo() {
   } catch (error) {
     yield put({
       type: actionTypesUser.LOAD_MY_INFO_ERROR,
+      error: error.response.data,
+    });
+  }
+}
+
+function loadUserInfoAPI(data: { userId: number }) {
+  return axios.get(`/user/${data.userId}`);
+}
+
+function* loadUserInfo(action: ILoadUserInfoRequest) {
+  try {
+    const result: {
+      data: {
+        id: number;
+        nickname: string;
+        email: string;
+        Posts: number;
+        Followings: number;
+        Followers: number;
+      };
+    } = yield call(loadUserInfoAPI, action.data);
+    yield put({
+      type: actionTypesUser.LOAD_USER_INFO_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    yield put({
+      type: actionTypesUser.LOAD_USER_INFO_ERROR,
       error: error.response.data,
     });
   }
@@ -134,7 +163,7 @@ function* unfollow(action: IUnfollowRequest) {
 }
 
 function loadFollowersAPI() {
-  return axios.get(`/user/followers`);
+  return axios.get('/user/followers');
 }
 
 function* loadFollowers() {
@@ -155,7 +184,7 @@ function* loadFollowers() {
 }
 
 function loadFollowingsAPI() {
-  return axios.get(`/user/followings`);
+  return axios.get('/user/followings');
 }
 
 function* loadFollowings() {
@@ -228,6 +257,9 @@ function* watchLogOut() {
 function* watchLoadMyInfo() {
   yield takeLatest(actionTypesUser.LOAD_MY_INFO_REQUEST, loadMyInfo);
 }
+function* watchLoadUserInfo() {
+  yield takeLatest(actionTypesUser.LOAD_USER_INFO_REQUEST, loadUserInfo);
+}
 function* watchSignUp() {
   yield takeLatest(actionTypesUser.SIGN_UP_REQUEST, signUp);
 }
@@ -255,6 +287,7 @@ export default function* userSaga() {
     fork(watchLogIn),
     fork(watchLogOut),
     fork(watchLoadMyInfo),
+    fork(watchLoadUserInfo),
     fork(watchSignUp),
     fork(watchFollow),
     fork(watchUnfollow),

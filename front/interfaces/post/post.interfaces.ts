@@ -1,7 +1,7 @@
 import { IPost } from '../db';
 
 export interface PostState {
-  singlePost: any;
+  singlePost: IPost | null;
   mainPosts: IPost[];
   imagePaths: string[];
   hasMorePost: boolean;
@@ -36,7 +36,7 @@ export interface PostState {
   loadPostLoading: boolean;
   loadPostDone: boolean;
   loadPostError: any;
-  loadPostOneLoading: boolean;
-  loadPostOneDone: boolean;
-  loadPostOneError: any;
+  loadPostsLoading: boolean;
+  loadPostsDone: boolean;
+  loadPostsError: any;
 }
