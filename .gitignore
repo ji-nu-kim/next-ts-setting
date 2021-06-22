@@ -1,11 +1,9 @@
-node_modules/
+node_modules
 
-.next/
+.next
 
 .env
 
 uploads
 
-ts-nodebird.pem
-
-bird
+nodebird.pem
